@@ -36,7 +36,7 @@ export default function SumasScreen({ navigation }) {
     }, [tipo]);
 
     const verificar = () => {
-        if (respuesta === '') return;
+        if (respuesta === '' || feedback !== null) return; // 👈 fix validación
         const correcto = parseInt(respuesta) === ejercicio.resultado;
         setFeedback(correcto ? 'bien' : 'mal');
 
@@ -60,6 +60,10 @@ export default function SumasScreen({ navigation }) {
                 Animated.timing(shake, { toValue: 6, duration: 60, useNativeDriver: true }),
                 Animated.timing(shake, { toValue: 0, duration: 60, useNativeDriver: true }),
             ]).start();
+            setTimeout(() => {  // 👈 fix limpieza tras error
+                setRespuesta('');
+                setFeedback(null);
+            }, 1500);
         }
     };
 
@@ -86,14 +90,12 @@ export default function SumasScreen({ navigation }) {
                 ))}
             </View>
 
-            {/* Visual emoji */}
             <View style={styles.emojiBox}>
                 <Text style={styles.emojiRow}>{EMOJI_KIT.slice(0, ejercicio.a).join('')}</Text>
                 <Text style={styles.opSymbol}>{tipo === 'suma' ? '➕' : '➖'}</Text>
                 <Text style={styles.emojiRow}>{EMOJI_KIT.slice(0, ejercicio.b).join('')}</Text>
             </View>
 
-            {/* Ejercicio */}
             <Animated.View style={[styles.ejercicioBox, {
                 transform: [{ translateX: shake }, { scale: scaleAnim }]
             }]}>
