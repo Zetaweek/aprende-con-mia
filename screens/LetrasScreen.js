@@ -1,115 +1,50 @@
-import React, { useState } from 'react';
-import {
-    View, Text, TouchableOpacity, StyleSheet,
-    SafeAreaView, FlatList, Dimensions, Animated
-} from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
-const LETRAS = [
-    { letra: 'A', ejemplo: '🍎 Araña' },
-    { letra: 'B', ejemplo: '🫧 Burbuja' },
-    { letra: 'C', ejemplo: '🐱 Gato' },
-    { letra: 'D', ejemplo: '🦷 Diente' },
-    { letra: 'E', ejemplo: '⭐ Estrella' },
-    { letra: 'F', ejemplo: '🌸 Flor' },
-    { letra: 'G', ejemplo: '🐱 Gatito' },
-    { letra: 'H', ejemplo: '🍦 Helado' },
-    { letra: 'I', ejemplo: '🦎 Iguana' },
-    { letra: 'J', ejemplo: '🫙 Jarrón' },
-    { letra: 'K', ejemplo: '🥝 Kiwi' },
-    { letra: 'L', ejemplo: '🌙 Luna' },
-    { letra: 'M', ejemplo: '🦋 Mariposa' },
-    { letra: 'N', ejemplo: '☁️ Nube' },
-    { letra: 'Ñ', ejemplo: '🍠 Ñame' },
-    { letra: 'O', ejemplo: '🐑 Oveja' },
-    { letra: 'P', ejemplo: '🐟 Pez' },
-    { letra: 'Q', ejemplo: '🧀 Queso' },
-    { letra: 'R', ejemplo: '🐸 Rana' },
-    { letra: 'S', ejemplo: '☀️ Sol' },
-    { letra: 'T', ejemplo: '🐢 Tortuga' },
-    { letra: 'U', ejemplo: '🍇 Uva' },
-    { letra: 'V', ejemplo: '🐄 Vaca' },
-    { letra: 'W', ejemplo: '🎮 Wii' },
-    { letra: 'X', ejemplo: '🎷 Xilófono' },
-    { letra: 'Y', ejemplo: '🌿 Yerba' },
-    { letra: 'Z', ejemplo: '🦓 Zebra' },
+const SUBMENU = [
+    { label: '⭐ Vocales', filtro: 'vocales', bg: '#C084FC' },
+    { label: '🐱 Consonantes', filtro: 'consonantes', bg: '#F472B6' },
+    { label: '📖 Abecedario completo', filtro: 'todas', bg: '#E879F9' },
 ];
 
-const COLORES = ['#C084FC', '#F472B6', '#E879F9', '#A855F7', '#EC4899'];
-
 export default function LetrasScreen({ navigation }) {
-    const [seleccionada, setSeleccionada] = useState(null);
-
-    const tocar = (item) => {
-        setSeleccionada(item.letra);
-    };
-
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}>
                 <Text style={styles.backText}>← Volver</Text>
             </TouchableOpacity>
-            <Text style={styles.title}>🐱 El Abecedario</Text>
-
-            {seleccionada && (
-                <View style={styles.detalle}>
-                    <Text style={styles.letraGrande}>{seleccionada}</Text>
-                    <Text style={styles.ejemplo}>
-                        {LETRAS.find(l => l.letra === seleccionada)?.ejemplo}
-                    </Text>
-                </View>
-            )}
-
-            <FlatList
-                data={LETRAS}
-                keyExtractor={(item) => item.letra}
-                numColumns={4}
-                contentContainerStyle={styles.grid}
-                renderItem={({ item, index }) => (
-                    <TouchableOpacity
-                        style={[
-                            styles.card,
-                            { backgroundColor: COLORES[index % COLORES.length] },
-                            seleccionada === item.letra && styles.cardActiva,
-                        ]}
-                        onPress={() => tocar(item)}
-                        activeOpacity={0.7}
-                    >
-                        <Text style={styles.letraCard}>{item.letra}</Text>
-                    </TouchableOpacity>
-                )}
-            />
+            <Text style={styles.title}>🐱 Las Letras</Text>
+            <Text style={styles.subtitle}>¿Qué quieres practicar?</Text>
+            {SUBMENU.map((item) => (
+                <TouchableOpacity
+                    key={item.filtro}
+                    style={[styles.btn, { backgroundColor: item.bg }]}
+                    onPress={() => navigation.navigate('LetrasDetalle', { filtro: item.filtro })}
+                    activeOpacity={0.8}
+                >
+                    <Text style={styles.btnText}>{item.label}</Text>
+                </TouchableOpacity>
+            ))}
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#FAE8FF', paddingTop: 16 },
-    back: { marginLeft: 16, marginBottom: 8 },
-    backText: { fontSize: 18, color: '#7E22CE', fontWeight: 'bold' },
-    title: { fontSize: 28, fontWeight: 'bold', color: '#7E22CE', textAlign: 'center', marginBottom: 12 },
-    detalle: {
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        marginHorizontal: 24,
-        borderRadius: 24,
-        paddingVertical: 16,
-        marginBottom: 12,
-        elevation: 6,
+    container: {
+        flex: 1, backgroundColor: '#FAE8FF',
+        alignItems: 'center', justifyContent: 'center', padding: 24,
     },
-    letraGrande: { fontSize: 72, fontWeight: 'bold', color: '#A855F7' },
-    ejemplo: { fontSize: 22, color: '#EC4899', marginTop: 4 },
-    grid: { paddingHorizontal: 12, paddingBottom: 24 },
-    card: {
-        margin: 8,
-        width: (width - 96) / 4,
-        aspectRatio: 1,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        elevation: 5,
+    back: { position: 'absolute', top: 48, left: 16 },
+    backText: { fontSize: 18, fontFamily: 'Nunito_700Bold', color: '#7E22CE' },
+    title: { fontSize: 40, fontFamily: 'Nunito_800ExtraBold', color: '#7E22CE', marginBottom: 8 },
+    subtitle: { fontSize: 20, fontFamily: 'Nunito_400Regular', color: '#A855F7', marginBottom: 40 },
+    btn: {
+        width: width * 0.8, paddingVertical: 22, borderRadius: 32,
+        alignItems: 'center', marginBottom: 20,
+        shadowColor: '#7E22CE', shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.3, shadowRadius: 8, elevation: 8,
     },
-    cardActiva: { borderWidth: 4, borderColor: '#fff' },
-    letraCard: { fontSize: 28, fontWeight: 'bold', color: '#fff' },
+    btnText: { fontSize: 24, fontFamily: 'Nunito_700Bold', color: '#fff' },
 });
